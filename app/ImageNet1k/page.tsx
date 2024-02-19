@@ -102,10 +102,19 @@ export default function Home() {
     const constraints = {
       video: { deviceId: { exact: selectedCameraId } },
     };
+    // 既存のタイマーをクリア
+    if (timerId) {
+      clearTimeout(timerId);
+    }
 
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
+      // 新しいストリームがロードされたら認識処理を再開
+      videoRef.current.onloadedmetadata = () => {
+        videoRef.current.play();
+        predictWebcam();
+      };
     }
   }
 
